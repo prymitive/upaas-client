@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+    :copyright: Copyright 2013 by Łukasz Mierzwa
+    :contact: l.mierzwa@gmail.com
+"""
+
+
+from upaas_client.main import ClientApplication
+from upaas_client.register import Register
+
+
+if __name__ == "__main__":
+    ClientApplication.run()
