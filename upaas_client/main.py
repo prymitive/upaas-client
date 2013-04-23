@@ -11,6 +11,7 @@ from upaas.cli.base import UPaaSApplication
 
 from upaas_client import __version__ as UPAAS_VERSION
 from upaas_client.return_codes import ExitCodes
+from upaas_client.config import ClientConfig
 
 
 class ClientApplication(UPaaSApplication):
@@ -24,6 +25,8 @@ class ClientApplication(UPaaSApplication):
 
     def main(self, *args):
         self.setup_logger()
+
+        self.config = ClientConfig.from_file(self.config_path)
 
         if args:
             self.log.error("Unknown command '%s'" % args)
