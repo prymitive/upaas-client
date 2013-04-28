@@ -10,3 +10,5 @@ class ExitCodes:
     ok = 0
 
     command_error = 1
+
+    notfound_error = 2

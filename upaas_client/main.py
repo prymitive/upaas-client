@@ -29,7 +29,7 @@ class ClientApplication(UPaaSApplication):
         self.config = ClientConfig.from_file(self.config_path)
 
         if args:
-            self.log.error("Unknown command '%s'" % args)
+            self.log.error("Unknown command '%s'" % ' '.join(args))
             return ExitCodes.command_error
 
         if not self.nested_command:

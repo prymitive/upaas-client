@@ -8,6 +8,8 @@
 
 from upaas_client.main import ClientApplication
 from upaas_client.register import Register
+from upaas_client.list import List
+from upaas_client.show import Show
 
 
 if __name__ == "__main__":

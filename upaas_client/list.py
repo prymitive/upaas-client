@@ -1,0 +1,37 @@
+# -*- coding: utf-8 -*-
+"""
+    :copyright: Copyright 2013 by Łukasz Mierzwa
+    :contact: l.mierzwa@gmail.com
+"""
+
+
+from slumber.exceptions import SlumberHttpBaseException
+
+from upaas.cli.base import UPaaSApplication
+
+from upaas_client.main import ClientApplication
+from upaas_client.return_codes import ExitCodes
+
+
+@ClientApplication.subcommand('list')
+class List(UPaaSApplication):
+
+    DESCRIPTION = "List registered applications"
+
+    def main(self):
+        self.setup_logger()
+        self.log.info("Getting list of registered applications")
+
+        self.api_connect(self.parent.config.server.login,
+                         self.parent.config.server.apikey,
+                         self.parent.config.server.url)
+
+        try:
+            resp = self.api.application.get()
+            self.print_msg("%d applications "
+                           "registered:" % resp['meta']['total_count'])
+            for app in resp['objects']:
+                self.print_msg(app['name'])
+        except SlumberHttpBaseException, e:
+            self.log.error(e.content)
+            return ExitCodes.command_error

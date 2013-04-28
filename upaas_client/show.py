@@ -10,21 +10,15 @@ from plumbum import cli
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
-from upaas.metadata import MetadataConfig
 
 from upaas_client.main import ClientApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@ClientApplication.subcommand('register')
-class Register(UPaaSApplication):
+@ClientApplication.subcommand('show')
+class Show(UPaaSApplication):
 
-    DESCRIPTION = "Register new application"
-
-    @cli.switch(["m", "metadata"], str, help="Application metadata file path",
-                mandatory=True)
-    def set_metadata_path(self, path):
-        self.metadata_path = path
+    DESCRIPTION = "Show application details"
 
     @cli.switch(["n", "name"], str, help="Application name", mandatory=True)
     def set_name(self, name):
@@ -32,20 +26,21 @@ class Register(UPaaSApplication):
 
     def main(self):
         self.setup_logger()
-        self.log.info("Registering new application using metadata at "
-                      "%s" % self.metadata_path)
-
-        meta = MetadataConfig.from_file(self.metadata_path)
+        self.log.info("Getting app '%s' details" % self.name)
 
         self.api_connect(self.parent.config.server.login,
                          self.parent.config.server.apikey,
                          self.parent.config.server.url)
 
         try:
-            self.api.application.post({'name': self.name,
-                                       'metadata': meta.dump_string()})
+            resp = self.api.application.get(name=self.name)
         except SlumberHttpBaseException, e:
             self.log.error(e.content)
-            return ExitCodes.command_error
         else:
-            self.log.info("Application '%s' created successfully" % self.name)
+            if not resp.get('objects'):
+                self.log.error("No such application registered: %s" % self.name)
+                return ExitCodes.notfound_error
+
+            app = resp['objects'][0]
+            self.print_msg("Name: %s" % app['name'])
+            self.print_msg("Created: %s" % app['date_created'])
