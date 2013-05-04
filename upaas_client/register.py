@@ -45,7 +45,7 @@ class Register(UPaaSApplication):
             self.api.application.post({'name': self.name,
                                        'metadata': meta.dump_string()})
         except SlumberHttpBaseException, e:
-            self.log.error(e.content)
+            self.handle_error(e)
             return ExitCodes.command_error
         else:
             self.log.info("Application '%s' created successfully" % self.name)

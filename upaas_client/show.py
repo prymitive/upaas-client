@@ -35,7 +35,7 @@ class Show(UPaaSApplication):
         try:
             resp = self.api.application.get(name=self.name)
         except SlumberHttpBaseException, e:
-            self.log.error(e.content)
+            self.handle_error(e)
         else:
             if not resp.get('objects'):
                 self.log.error("No such application registered: %s" % self.name)
