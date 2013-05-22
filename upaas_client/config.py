@@ -5,15 +5,15 @@
 """
 
 
-from upaas import config
+from upaas.config import base
 
 
-class ClientConfig(config.Config):
+class ClientConfig(base.Config):
 
     schema = {
         "server": {
-            "url": config.StringEntry(required=True),
-            "login": config.StringEntry(required=True),
-            "apikey": config.StringEntry(required=True),
+            "url": base.StringEntry(required=True),
+            "login": base.StringEntry(required=True),
+            "apikey": base.StringEntry(required=True),
         }
     }
