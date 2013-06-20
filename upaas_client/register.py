@@ -10,7 +10,7 @@ from plumbum import cli
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
-from upaas.metadata import MetadataConfig
+from upaas.config.metadata import MetadataConfig
 
 from upaas_client.main import ClientApplication
 from upaas_client.return_codes import ExitCodes

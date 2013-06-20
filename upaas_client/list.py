@@ -26,7 +26,7 @@ class List(UPaaSApplication):
 
         try:
             resp = self.api.application.get()
-            self.print_msg("%d applications "
+            self.print_msg("%d application(s) "
                            "registered:" % resp['meta']['total_count'])
             for app in resp['objects']:
                 self.print_msg(app['name'])
