@@ -10,15 +10,21 @@ from plumbum import cli
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
+from upaas.config.metadata import MetadataConfig
 
 from upaas_client.main import ClientApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@ClientApplication.subcommand('show')
-class Show(UPaaSApplication):
+@ClientApplication.subcommand('update')
+class Update(UPaaSApplication):
 
-    DESCRIPTION = "Show application details"
+    DESCRIPTION = "Update application metadata"
+
+    @cli.switch(["m", "metadata"], str, help="Application metadata file path",
+                mandatory=True)
+    def set_metadata_path(self, path):
+        self.metadata_path = path
 
     @cli.switch(["n", "name"], str, help="Application name", mandatory=True)
     def set_name(self, name):
@@ -26,7 +32,10 @@ class Show(UPaaSApplication):
 
     def main(self):
         self.setup_logger()
-        self.log.info("Getting app '%s' details" % self.name)
+        self.log.info("Registering new application using metadata at "
+                      "%s" % self.metadata_path)
+
+        meta = MetadataConfig.from_file(self.metadata_path)
 
         self.api_connect(self.parent.config.server.login,
                          self.parent.config.server.apikey,
@@ -42,8 +51,12 @@ class Show(UPaaSApplication):
                 return ExitCodes.notfound_error
 
             app = resp['objects'][0]
-            self.print_msg("Name: %s" % app['name'])
-            self.print_msg("Created: %s" % app['date_created'])
-            self.print_msg("Metadata:")
-            for line in app['metadata'].splitlines():
-                self.print_msg("| %s" % line)
+
+            try:
+                self.api.application(app['id']).put(
+                    {'name': app['name'], 'metadata': meta.dump_string()})
+            except SlumberHttpBaseException, e:
+                self.handle_error(e)
+            else:
+                self.log.info("Application '%s' metadata updated "
+                              "successfully" % self.name)

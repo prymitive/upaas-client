@@ -1,2 +1,3 @@
+slumber
 plumbum>=1.1
 upaas-common

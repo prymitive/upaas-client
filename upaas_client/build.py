@@ -15,10 +15,10 @@ from upaas_client.main import ClientApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@ClientApplication.subcommand('show')
-class Show(UPaaSApplication):
+@ClientApplication.subcommand('build')
+class Build(UPaaSApplication):
 
-    DESCRIPTION = "Show application details"
+    DESCRIPTION = "Build new application package"
 
     @cli.switch(["n", "name"], str, help="Application name", mandatory=True)
     def set_name(self, name):
@@ -42,8 +42,9 @@ class Show(UPaaSApplication):
                 return ExitCodes.notfound_error
 
             app = resp['objects'][0]
-            self.print_msg("Name: %s" % app['name'])
-            self.print_msg("Created: %s" % app['date_created'])
-            self.print_msg("Metadata:")
-            for line in app['metadata'].splitlines():
-                self.print_msg("| %s" % line)
+
+            try:
+                self.api.application(app['id'], 'build').put(
+                    {'name': app['name']})
+            except SlumberHttpBaseException, e:
+                self.handle_error(e)
