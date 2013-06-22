@@ -49,4 +49,4 @@ class Build(UPaaSApplication):
             except SlumberHttpBaseException, e:
                 self.handle_error(e)
 
-            log.info("Build task queued")
+            self.log.info("Build task queued")
