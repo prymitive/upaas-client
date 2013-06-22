@@ -44,9 +44,9 @@ class Build(UPaaSApplication):
             app = resp['objects'][0]
 
             try:
-                self.api.application(app['id'], 'build').put(
+                self.api.application(app['id']).build.put(
                     {'name': app['name']})
             except SlumberHttpBaseException, e:
                 self.handle_error(e)
-
-            self.log.info("Build task queued")
+            else:
+                self.log.info("Build task queued")
