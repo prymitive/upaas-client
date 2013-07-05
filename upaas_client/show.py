@@ -38,7 +38,8 @@ class Show(UPaaSApplication):
             self.handle_error(e)
         else:
             if not resp.get('objects'):
-                self.log.error("No such application registered: %s" % self.name)
+                self.log.error("No such application registered: "
+                               "%s" % self.name)
                 return ExitCodes.notfound_error
 
             app = resp['objects'][0]
