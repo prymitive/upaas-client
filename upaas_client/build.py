@@ -20,9 +20,16 @@ class Build(UPaaSApplication):
 
     DESCRIPTION = "Build new application package"
 
+    name = None
+    force_fresh = False
+
     @cli.switch(["n", "name"], str, help="Application name", mandatory=True)
     def set_name(self, name):
         self.name = name
+
+    @cli.switch(["f", "force-fresh"], help="Force building fresh package")
+    def set_force_fresh(self):
+        self.force_fresh = True
 
     def main(self):
         self.setup_logger()
@@ -45,9 +52,14 @@ class Build(UPaaSApplication):
             app = resp['objects'][0]
 
             try:
-                self.api.application(app['id']).build.put(
-                    {'name': app['name']})
+                if self.force_fresh:
+                    self.api.application(app['id']).build_fresh.put(
+                        {'name': app['name']})
+                else:
+                    self.api.application(app['id']).build.put(
+                        {'name': app['name']})
             except SlumberHttpBaseException, e:
                 self.handle_error(e)
             else:
-                self.log.info("Build task queued")
+                self.log.info("Build task queued (fresh: "
+                              "%s)" % self.force_fresh)
