@@ -12,6 +12,7 @@ from upaas_client.list import List
 from upaas_client.show import Show
 from upaas_client.update import Update
 from upaas_client.build import Build
+from upaas_client.start import Start
 
 
 if __name__ == "__main__":
