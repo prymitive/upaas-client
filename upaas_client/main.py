@@ -5,9 +5,10 @@
 """
 
 
-from plumbum import cli
+from os.path import expanduser
 
 from upaas.cli.base import UPaaSApplication
+from upaas.config.base import load_config
 
 from upaas_client import __version__ as UPAAS_VERSION
 from upaas_client.return_codes import ExitCodes
@@ -18,15 +19,14 @@ class ClientApplication(UPaaSApplication):
 
     VERSION = UPAAS_VERSION
 
-    @cli.switch(["c", "config"], str, help="Configuration file path",
-                mandatory=True)
-    def set_config_path(self, path):
-        self.config_path = path
-
     def main(self, *args):
         self.setup_logger()
 
-        self.config = ClientConfig.from_file(self.config_path)
+        self.config = load_config(ClientConfig, ".upaas.yml",
+                                  directories=[".", expanduser("~")])
+        if not self.config:
+            self.log.error("Missing config file")
+            return ExitCodes.missing_config
 
         if args:
             self.log.error("Unknown command '%s'" % ' '.join(args))

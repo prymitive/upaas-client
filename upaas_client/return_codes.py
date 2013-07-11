@@ -12,3 +12,5 @@ class ExitCodes:
     command_error = 1
 
     notfound_error = 2
+
+    missing_config = 3
