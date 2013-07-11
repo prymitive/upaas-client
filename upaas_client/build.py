@@ -20,33 +20,27 @@ class Build(UPaaSApplication):
 
     DESCRIPTION = "Build new application package"
 
-    name = None
     force_fresh = False
-
-    @cli.switch(["n", "name"], str, help="Application name", mandatory=True)
-    def set_name(self, name):
-        self.name = name
 
     @cli.switch(["f", "force-fresh"], help="Force building fresh package")
     def set_force_fresh(self):
         self.force_fresh = True
 
-    def main(self):
+    def main(self, name):
         self.setup_logger()
-        self.log.info("Getting app '%s' details" % self.name)
+        self.log.info("Getting app '%s' details" % name)
 
         self.api_connect(self.parent.config.server.login,
                          self.parent.config.server.apikey,
                          self.parent.config.server.url)
 
         try:
-            resp = self.api.application.get(name=self.name)
+            resp = self.api.application.get(name=name)
         except SlumberHttpBaseException, e:
             self.handle_error(e)
         else:
             if not resp.get('objects'):
-                self.log.error("No such application registered: "
-                               "%s" % self.name)
+                self.log.error("No such application registered: %s" % name)
                 return ExitCodes.notfound_error
 
             app = resp['objects'][0]

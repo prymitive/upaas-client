@@ -5,8 +5,6 @@
 """
 
 
-from plumbum import cli
-
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
@@ -21,31 +19,22 @@ class Register(UPaaSApplication):
 
     DESCRIPTION = "Register new application"
 
-    @cli.switch(["m", "metadata"], str, help="Application metadata file path",
-                mandatory=True)
-    def set_metadata_path(self, path):
-        self.metadata_path = path
-
-    @cli.switch(["n", "name"], str, help="Application name", mandatory=True)
-    def set_name(self, name):
-        self.name = name
-
-    def main(self):
+    def main(self, name, metadata_path):
         self.setup_logger()
         self.log.info("Registering new application using metadata at "
-                      "%s" % self.metadata_path)
+                      "%s" % metadata_path)
 
-        meta = MetadataConfig.from_file(self.metadata_path)
+        meta = MetadataConfig.from_file(metadata_path)
 
         self.api_connect(self.parent.config.server.login,
                          self.parent.config.server.apikey,
                          self.parent.config.server.url)
 
         try:
-            self.api.application.post({'name': self.name,
+            self.api.application.post({'name': name,
                                        'metadata': meta.dump_string()})
         except SlumberHttpBaseException, e:
             self.handle_error(e)
             return ExitCodes.command_error
         else:
-            self.log.info("Application '%s' created successfully" % self.name)
+            self.log.info("Application '%s' created successfully" % name)
