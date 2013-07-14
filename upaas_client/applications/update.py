@@ -5,30 +5,26 @@
 """
 
 
-from plumbum import cli
-
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
+from upaas.config.metadata import MetadataConfig
 
-from upaas_client.main import ClientApplication
+from upaas_client.applications.base import AppApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@ClientApplication.subcommand('build')
-class Build(UPaaSApplication):
+@AppApplication.subcommand('update')
+class Update(UPaaSApplication):
 
-    DESCRIPTION = "Build new application package"
+    DESCRIPTION = "Update application metadata"
 
-    force_fresh = False
-
-    @cli.switch(["f", "force-fresh"], help="Force building fresh package")
-    def set_force_fresh(self):
-        self.force_fresh = True
-
-    def main(self, name):
+    def main(self, name, metadata_path):
         self.setup_logger()
-        self.log.info("Getting app '%s' details" % name)
+        self.log.info("Registering new application using metadata at "
+                      "%s" % metadata_path)
+
+        meta = MetadataConfig.from_file(metadata_path)
 
         self.api_connect(self.parent.config.server.login,
                          self.parent.config.server.apikey,
@@ -46,14 +42,10 @@ class Build(UPaaSApplication):
             app = resp['objects'][0]
 
             try:
-                if self.force_fresh:
-                    self.api.application(app['id']).build_fresh.put(
-                        {'name': app['name']})
-                else:
-                    self.api.application(app['id']).build.put(
-                        {'name': app['name']})
+                self.api.application(app['id']).put(
+                    {'name': app['name'], 'metadata': meta.dump_string()})
             except SlumberHttpBaseException, e:
                 self.handle_error(e)
             else:
-                self.log.info("Build task queued (fresh: "
-                              "%s)" % self.force_fresh)
+                self.log.info("Application '%s' metadata updated "
+                              "successfully" % name)

@@ -7,12 +7,7 @@
 
 
 from upaas_client.main import ClientApplication
-from upaas_client.register import Register
-from upaas_client.list import List
-from upaas_client.show import Show
-from upaas_client.update import Update
-from upaas_client.build import Build
-from upaas_client.start import Start
+from upaas_client.applications import *
 
 
 if __name__ == "__main__":

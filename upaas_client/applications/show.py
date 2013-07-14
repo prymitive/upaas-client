@@ -5,20 +5,18 @@
 """
 
 
-from plumbum import cli
-
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
 
-from upaas_client.main import ClientApplication
+from upaas_client.applications.base import AppApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@ClientApplication.subcommand('start')
-class Start(UPaaSApplication):
+@AppApplication.subcommand('show')
+class Show(UPaaSApplication):
 
-    DESCRIPTION = "Start application"
+    DESCRIPTION = "Show application details"
 
     def main(self, name):
         self.setup_logger()
@@ -38,11 +36,9 @@ class Start(UPaaSApplication):
                 return ExitCodes.notfound_error
 
             app = resp['objects'][0]
-
-            try:
-                self.api.application(app['id']).start.put(
-                    {'name': app['name']})
-            except SlumberHttpBaseException, e:
-                self.handle_error(e)
-            else:
-                self.log.info("Start task queued")
+            self.print_msg("Name: %s" % app['name'])
+            self.print_msg("Created: %s" % app['date_created'])
+            self.print_msg("Packages: %d" % len(app['packages']))
+            self.print_msg("Metadata:")
+            for line in app['metadata'].splitlines():
+                self.print_msg("| %s" % line)
