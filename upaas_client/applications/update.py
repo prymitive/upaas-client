@@ -42,8 +42,8 @@ class Update(UPaaSApplication):
             app = resp['objects'][0]
 
             try:
-                self.api.application(app['id']).put(
-                    {'name': app['name'], 'metadata': meta.dump_string()})
+                self.api.application(app['id']).patch(
+                    {'metadata': meta.dump_string()})
             except SlumberHttpBaseException, e:
                 self.handle_error(e)
             else:
