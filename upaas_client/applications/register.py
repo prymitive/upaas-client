@@ -10,11 +10,11 @@ from slumber.exceptions import SlumberHttpBaseException
 from upaas.cli.base import UPaaSApplication
 from upaas.config.metadata import MetadataConfig
 
-from upaas_client.applications.base import AppApplication
+from upaas_client.main import ClientApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@AppApplication.subcommand('register')
+@ClientApplication.subcommand('register')
 class Register(UPaaSApplication):
 
     DESCRIPTION = "Register new application"

@@ -5,10 +5,14 @@
 """
 
 
+from os.path import expanduser
+
 from upaas.cli.base import UPaaSApplication
+from upaas.config.base import load_config
 
 from upaas_client import __version__ as UPAAS_VERSION
 from upaas_client.return_codes import ExitCodes
+from upaas_client.config import ClientConfig
 
 
 class ClientApplication(UPaaSApplication):
@@ -17,6 +21,12 @@ class ClientApplication(UPaaSApplication):
 
     def main(self, *args):
         self.setup_logger()
+
+        self.config = load_config(ClientConfig, ".upaas.yml",
+                                  directories=[".", expanduser("~")])
+        if not self.config:
+            self.log.error("Missing config file")
+            return ExitCodes.missing_config
 
         if args:
             self.log.error("Unknown command '%s'" % ' '.join(args))

@@ -9,11 +9,11 @@ from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
 
-from upaas_client.applications.base import AppApplication
+from upaas_client.main import ClientApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@AppApplication.subcommand('show')
+@ClientApplication.subcommand('show')
 class Show(UPaaSApplication):
 
     DESCRIPTION = "Show application details"

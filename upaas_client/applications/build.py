@@ -11,11 +11,11 @@ from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
 
-from upaas_client.applications.base import AppApplication
+from upaas_client.main import ClientApplication
 from upaas_client.return_codes import ExitCodes
 
 
-@AppApplication.subcommand('build')
+@ClientApplication.subcommand('build')
 class Build(UPaaSApplication):
 
     DESCRIPTION = "Build new application package"
