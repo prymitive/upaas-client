@@ -29,7 +29,7 @@ class List(UPaaSApplication):
             self.print_msg("%d application(s) "
                            "registered:" % resp['meta']['total_count'])
             for app in resp['objects']:
-                self.print_msg(app['name'])
+                self.print_msg(app['name'], prefix='*')
         except Exception, e:
             self.handle_error(e)
             return ExitCodes.command_error
