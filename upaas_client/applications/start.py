@@ -18,7 +18,7 @@ class Start(UPaaSApplication):
 
     DESCRIPTION = "Start application"
 
-    def main(self, name):
+    def main(self, name, worker_limit, memory_limit):
         self.setup_logger()
         self.log.info("Getting app '%s' details" % name)
 
@@ -36,6 +36,14 @@ class Start(UPaaSApplication):
                 return ExitCodes.notfound_error
 
             app = resp['objects'][0]
+
+            try:
+                self.api.run_plan.post({
+                    'application': app['id'], 'worker_limit': worker_limit,
+                    'memory_limit': memory_limit})
+            except SlumberHttpBaseException, e:
+                self.handle_error(e)
+                return ExitCodes.command_error
 
             try:
                 self.api.application(app['id']).start.put(
