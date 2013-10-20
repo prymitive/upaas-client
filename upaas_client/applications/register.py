@@ -24,7 +24,13 @@ class Register(UPaaSApplication):
         self.log.info("Registering new application using metadata at "
                       "%s" % metadata_path)
 
-        meta = MetadataConfig.from_file(metadata_path)
+        try:
+            with open(metadata_path) as m:
+                meta = m.read()
+            MetadataConfig.from_file(metadata_path)
+        except:
+            self.log.error("Invalid metadata in %s" % metadata_path)
+            return ExitCodes.command_error
 
         self.api_connect(self.parent.config.server.login,
                          self.parent.config.server.apikey,
@@ -32,7 +38,7 @@ class Register(UPaaSApplication):
 
         try:
             self.api.application.post({'name': name,
-                                       'metadata': meta.dump_string()})
+                                       'metadata': meta})
         except SlumberHttpBaseException, e:
             self.handle_error(e)
             return ExitCodes.command_error
