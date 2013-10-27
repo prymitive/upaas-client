@@ -5,6 +5,8 @@
 """
 
 
+from plumbum import cli
+
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
@@ -17,6 +19,12 @@ from upaas_client.return_codes import ExitCodes
 class Start(UPaaSApplication):
 
     DESCRIPTION = "Start application"
+
+    ha_enabled = False
+
+    @cli.switch(["H", "enable-ha"], help="Enable high availability")
+    def set_ha_enabled(self):
+        self.ha_enabled = True
 
     def main(self, name, worker_limit, memory_limit):
         self.setup_logger()
@@ -40,7 +48,8 @@ class Start(UPaaSApplication):
             try:
                 self.api.run_plan.post({
                     'application': app['id'], 'worker_limit': worker_limit,
-                    'memory_limit': memory_limit})
+                    'memory_limit': memory_limit,
+                    'ha_enabled': self.ha_enabled})
             except SlumberHttpBaseException, e:
                 self.handle_error(e)
                 return ExitCodes.command_error
