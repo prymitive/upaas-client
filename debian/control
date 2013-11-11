@@ -8,7 +8,7 @@ XS-Python-Version: current
 
 Package: python-upaas-client
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, python-upaas-common (>= 0.2), python-slumber (>= 0.6.0), python-plumbum (>= 1.4.0)
+Depends: ${misc:Depends}, ${python:Depends}, python-upaas-common (>= 0.1.999), python-slumber (>= 0.6.0), python-plumbum (>= 1.4.0)
 XB-Python-Version: ${python:Versions}
 Provides: ${python:Provides}
 Description: uPaaS CLI client
