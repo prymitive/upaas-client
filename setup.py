@@ -18,7 +18,7 @@ except ImportError:
 
 setup(
     name='upaas-client',
-    version='0.2-dev2',
+    version='0.2-dev',
     license='GPLv3',
     description='uPaaS CLI client',
     author='Łukasz Mierzwa',
