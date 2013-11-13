@@ -12,3 +12,4 @@ from update import Update
 from build import Build
 from start import Start
 from stop import Stop
+from edit import Edit
