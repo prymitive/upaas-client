@@ -38,7 +38,7 @@ class Start(UPaaSApplication):
     def set_memory_limit(self, memory):
         self.memory_limit = memory
 
-    def main(self, name, worker_limit, memory_limit):
+    def main(self, name):
         self.setup_logger()
         self.log.info("Getting app '%s' details" % name)
 
