@@ -21,12 +21,24 @@ class Edit(UPaaSApplication):
     DESCRIPTION = "Edit running application settings"
 
     ha_enabled = False
+    worker_limit = 0
+    memory_limit = 0
 
     @cli.switch(["H", "enable-ha"], help="Enable high availability")
     def set_ha_enabled(self):
         self.ha_enabled = True
 
-    def main(self, name, worker_limit, memory_limit):
+    @cli.switch(["w", "workers"], int, mandatory=True,
+                help="Maximum number of workers")
+    def set_worker_limit(self, workers):
+        self.worker_limit = workers
+
+    @cli.switch(["m", "memory"], int, mandatory=True,
+                help="Memory limit (MB)")
+    def set_memory_limit(self, memory):
+        self.memory_limit = memory
+
+    def main(self, name):
         self.setup_logger()
         self.log.info("Getting app '%s' details" % name)
 
@@ -56,8 +68,8 @@ class Edit(UPaaSApplication):
 
         try:
             self.api.run_plan(run_plan['id']).patch({
-                'worker_limit': worker_limit,
-                'memory_limit': memory_limit,
+                'worker_limit': self.worker_limit,
+                'memory_limit': self.memory_limit,
                 'ha_enabled': self.ha_enabled})
         except SlumberHttpBaseException, e:
             self.handle_error(e)
