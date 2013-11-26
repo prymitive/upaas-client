@@ -14,3 +14,5 @@ class ExitCodes:
     notfound_error = 2
 
     missing_config = 3
+
+    user_error =4

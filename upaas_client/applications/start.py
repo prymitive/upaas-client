@@ -20,23 +20,16 @@ class Start(UPaaSApplication):
 
     DESCRIPTION = "Start application"
 
-    ha_enabled = False
-    worker_limit = 0
-    memory_limit = 0
+    workers_min = 1
+    workers_max = 1
 
-    @cli.switch(["H", "enable-ha"], help="Enable high availability")
-    def set_ha_enabled(self):
-        self.ha_enabled = True
+    @cli.switch(["w", "--workers-min"], int, help=u"Minimum number of workers")
+    def set_workers_min(self, value):
+        self.workers_min = value
 
-    @cli.switch(["w", "workers"], int, mandatory=True,
-                help="Maximum number of workers")
-    def set_worker_limit(self, workers):
-        self.worker_limit = workers
-
-    @cli.switch(["m", "memory"], int, mandatory=True,
-                help="Memory limit (MB)")
-    def set_memory_limit(self, memory):
-        self.memory_limit = memory
+    @cli.switch(["W", "--workers-max"], int, help=u"Maximum number of workers")
+    def set_workers_max(self, value):
+        self.workers_max = value
 
     def main(self, name):
         self.setup_logger()
@@ -58,11 +51,20 @@ class Start(UPaaSApplication):
             app = resp['objects'][0]
 
             try:
+                resp = self.api.run_plan.get(application=app['id'])
+            except SlumberHttpBaseException, e:
+                self.handle_error(e)
+            else:
+                if resp.get('objects'):
+                    self.log.error(u"Application is already started")
+                    return ExitCodes.user_error
+
+            try:
                 self.api.run_plan.post({
                     'application': app['id'],
-                    'worker_limit': self.worker_limit,
-                    'memory_limit': self.memory_limit,
-                    'ha_enabled': self.ha_enabled})
+                    'workers_min': self.workers_min,
+                    'workers_max': self.workers_max
+                })
             except SlumberHttpBaseException, e:
                 self.handle_error(e)
                 return ExitCodes.command_error

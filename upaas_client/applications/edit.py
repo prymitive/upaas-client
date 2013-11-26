@@ -18,29 +18,32 @@ from upaas_client.return_codes import ExitCodes
 @ClientApplication.subcommand('edit')
 class Edit(UPaaSApplication):
 
-    DESCRIPTION = "Edit running application settings"
+    DESCRIPTION = u"Edit running application settings"
 
-    ha_enabled = False
-    worker_limit = 0
-    memory_limit = 0
+    workers_min = 0
+    workers_max = 0
 
-    @cli.switch(["H", "enable-ha"], help="Enable high availability")
-    def set_ha_enabled(self):
-        self.ha_enabled = True
+    @cli.switch(["w", "--workers-min"], int, help=u"Minimum number of workers")
+    def set_workers_min(self, value):
+        self.workers_min = value
 
-    @cli.switch(["w", "workers"], int, mandatory=True,
-                help="Maximum number of workers")
-    def set_worker_limit(self, workers):
-        self.worker_limit = workers
-
-    @cli.switch(["m", "memory"], int, mandatory=True,
-                help="Memory limit (MB)")
-    def set_memory_limit(self, memory):
-        self.memory_limit = memory
+    @cli.switch(["W", "--workers-max"], int, help=u"Maximum number of workers")
+    def set_workers_max(self, value):
+        self.workers_max = value
 
     def main(self, name):
         self.setup_logger()
-        self.log.info("Getting app '%s' details" % name)
+
+        if not self.workers_min and not self.workers_max:
+            self.log.error(u"To edit application provide new minimum or "
+                           u"maximum workers count")
+            return ExitCodes.user_error
+        if self.workers_min > self.workers_max:
+            self.log.error(u"Maximum number of workers must be higher than "
+                           u"minimum")
+            return ExitCodes.user_error
+
+        self.log.info(u"Getting app '%s' details" % name)
 
         self.api_connect(self.parent.config.server.login,
                          self.parent.config.server.apikey,
@@ -52,7 +55,7 @@ class Edit(UPaaSApplication):
             self.handle_error(e)
         else:
             if not resp.get('objects'):
-                self.log.error("No such application registered: %s" % name)
+                self.log.error(u"No such application registered: %s" % name)
                 return ExitCodes.notfound_error
         app = resp['objects'][0]
 
@@ -62,15 +65,17 @@ class Edit(UPaaSApplication):
             self.handle_error(e)
         else:
             if not resp.get('objects'):
-                self.log.error("Application is stopped")
-                return ExitCodes.command_error
+                self.log.error(u"Application is stopped")
+                return ExitCodes.user_error
         run_plan = resp['objects'][0]
 
+        payload = {}
+        if self.workers_min:
+            payload['workers_min'] = self.workers_min
+        if self.workers_max:
+            payload['workers_max'] = self.workers_max
         try:
-            self.api.run_plan(run_plan['id']).patch({
-                'worker_limit': self.worker_limit,
-                'memory_limit': self.memory_limit,
-                'ha_enabled': self.ha_enabled})
+            self.api.run_plan(run_plan['id']).patch(payload)
         except SlumberHttpBaseException, e:
             self.handle_error(e)
             return ExitCodes.command_error
@@ -81,4 +86,4 @@ class Edit(UPaaSApplication):
         except SlumberHttpBaseException, e:
             self.handle_error(e)
         else:
-            self.log.info("Update task queued")
+            self.log.info(u"Update task queued")
