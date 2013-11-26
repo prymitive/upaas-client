@@ -15,4 +15,4 @@ class ExitCodes:
 
     missing_config = 3
 
-    user_error =4
+    user_error = 4
