@@ -38,7 +38,8 @@ class Edit(UPaaSApplication):
             self.log.error(u"To edit application provide new minimum or "
                            u"maximum workers count")
             return ExitCodes.user_error
-        if self.workers_min > self.workers_max:
+        if self.workers_min and self.workers_max \
+                and self.workers_min > self.workers_max:
             self.log.error(u"Maximum number of workers must be higher than "
                            u"minimum")
             return ExitCodes.user_error

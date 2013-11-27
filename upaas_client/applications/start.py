@@ -33,6 +33,13 @@ class Start(UPaaSApplication):
 
     def main(self, name):
         self.setup_logger()
+
+        if self.workers_min and self.workers_max \
+                and self.workers_min > self.workers_max:
+            self.log.error(u"Maximum number of workers must be higher than "
+                           u"minimum")
+            return ExitCodes.user_error
+
         self.log.info("Getting app '%s' details" % name)
 
         self.api_connect(self.parent.config.server.login,
