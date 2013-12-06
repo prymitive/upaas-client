@@ -51,5 +51,5 @@ class ClientApplication(UPaaSApplication):
             return ExitCodes.command_error
 
         if not self.nested_command:
-            self.log.error("No command given")
+            self.help()
             return ExitCodes.command_error
