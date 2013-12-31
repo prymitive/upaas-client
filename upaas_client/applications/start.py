@@ -5,6 +5,8 @@
 """
 
 
+from __future__ import unicode_literals
+
 from plumbum import cli
 
 from slumber.exceptions import SlumberHttpBaseException
@@ -23,11 +25,11 @@ class Start(UPaaSApplication):
     workers_min = 1
     workers_max = 1
 
-    @cli.switch(["w", "--workers-min"], int, help=u"Minimum number of workers")
+    @cli.switch(["w", "--workers-min"], int, help="Minimum number of workers")
     def set_workers_min(self, value):
         self.workers_min = value
 
-    @cli.switch(["W", "--workers-max"], int, help=u"Maximum number of workers")
+    @cli.switch(["W", "--workers-max"], int, help="Maximum number of workers")
     def set_workers_max(self, value):
         self.workers_max = value
 
@@ -36,8 +38,8 @@ class Start(UPaaSApplication):
 
         if self.workers_min and self.workers_max \
                 and self.workers_min > self.workers_max:
-            self.log.error(u"Maximum number of workers must be higher than "
-                           u"minimum")
+            self.log.error("Maximum number of workers must be higher than "
+                           "minimum")
             return ExitCodes.user_error
 
         self.log.info("Getting app '%s' details" % name)
@@ -48,7 +50,7 @@ class Start(UPaaSApplication):
 
         try:
             resp = self.api.application.get(name=name)
-        except SlumberHttpBaseException, e:
+        except SlumberHttpBaseException as e:
             self.handle_error(e)
         else:
             if not resp.get('objects'):
@@ -59,11 +61,11 @@ class Start(UPaaSApplication):
 
             try:
                 resp = self.api.run_plan.get(application=app['id'])
-            except SlumberHttpBaseException, e:
+            except SlumberHttpBaseException as e:
                 self.handle_error(e)
             else:
                 if resp.get('objects'):
-                    self.log.error(u"Application is already started")
+                    self.log.error("Application is already started")
                     return ExitCodes.user_error
 
             try:
@@ -72,14 +74,14 @@ class Start(UPaaSApplication):
                     'workers_min': self.workers_min,
                     'workers_max': self.workers_max
                 })
-            except SlumberHttpBaseException, e:
+            except SlumberHttpBaseException as e:
                 self.handle_error(e)
                 return ExitCodes.command_error
 
             try:
                 self.api.application(app['id']).start.put(
                     {'name': app['name']})
-            except SlumberHttpBaseException, e:
+            except SlumberHttpBaseException as e:
                 self.handle_error(e)
             else:
                 self.log.info("Start task queued")

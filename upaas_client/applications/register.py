@@ -5,6 +5,8 @@
 """
 
 
+from __future__ import unicode_literals
+
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
@@ -39,7 +41,7 @@ class Register(UPaaSApplication):
         try:
             self.api.application.post({'name': name,
                                        'metadata': meta})
-        except SlumberHttpBaseException, e:
+        except SlumberHttpBaseException as e:
             self.handle_error(e)
             return ExitCodes.command_error
         else:

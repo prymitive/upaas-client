@@ -5,6 +5,8 @@
 """
 
 
+from __future__ import unicode_literals
+
 from plumbum import cli
 
 from slumber.exceptions import SlumberHttpBaseException
@@ -36,7 +38,7 @@ class Build(UPaaSApplication):
 
         try:
             resp = self.api.application.get(name=name)
-        except SlumberHttpBaseException, e:
+        except SlumberHttpBaseException as e:
             self.handle_error(e)
         else:
             if not resp.get('objects'):
@@ -52,7 +54,7 @@ class Build(UPaaSApplication):
                 else:
                     self.api.application(app['id']).build.put(
                         {'name': app['name']})
-            except SlumberHttpBaseException, e:
+            except SlumberHttpBaseException as e:
                 self.handle_error(e)
             else:
                 self.log.info("Build task queued (fresh: "

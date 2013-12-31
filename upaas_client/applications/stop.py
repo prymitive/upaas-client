@@ -5,6 +5,8 @@
 """
 
 
+from __future__ import unicode_literals
+
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
@@ -28,7 +30,7 @@ class Stop(UPaaSApplication):
 
         try:
             resp = self.api.application.get(name=name)
-        except SlumberHttpBaseException, e:
+        except SlumberHttpBaseException as e:
             self.handle_error(e)
         else:
             if not resp.get('objects'):
@@ -40,7 +42,7 @@ class Stop(UPaaSApplication):
             try:
                 self.api.application(app['id']).stop.put(
                     {'name': app['name']})
-            except SlumberHttpBaseException, e:
+            except SlumberHttpBaseException as e:
                 self.handle_error(e)
             else:
                 self.log.info("Stop task queued")

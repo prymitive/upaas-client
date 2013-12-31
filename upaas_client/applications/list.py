@@ -5,6 +5,8 @@
 """
 
 
+from __future__ import unicode_literals
+
 from upaas.cli.base import UPaaSApplication
 
 from upaas_client.main import ClientApplication
@@ -30,6 +32,6 @@ class List(UPaaSApplication):
                            "registered:" % resp['meta']['total_count'])
             for app in resp['objects']:
                 self.print_msg(app['name'], prefix='*')
-        except Exception, e:
+        except Exception as e:
             self.handle_error(e)
             return ExitCodes.command_error

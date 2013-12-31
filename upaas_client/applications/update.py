@@ -5,6 +5,8 @@
 """
 
 
+from __future__ import unicode_literals
+
 from slumber.exceptions import SlumberHttpBaseException
 
 from upaas.cli.base import UPaaSApplication
@@ -32,7 +34,7 @@ class Update(UPaaSApplication):
 
         try:
             resp = self.api.application.get(name=name)
-        except SlumberHttpBaseException, e:
+        except SlumberHttpBaseException as e:
             self.handle_error(e)
         else:
             if not resp.get('objects'):
@@ -44,7 +46,7 @@ class Update(UPaaSApplication):
             try:
                 self.api.application(app['id']).patch(
                     {'metadata': meta.dump_string()})
-            except SlumberHttpBaseException, e:
+            except SlumberHttpBaseException as e:
                 self.handle_error(e)
             else:
                 self.log.info("Application '%s' metadata updated "

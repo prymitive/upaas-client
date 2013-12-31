@@ -5,11 +5,11 @@
 """
 
 
-from register import Register
-from list import List
-from show import Show
-from update import Update
-from build import Build
-from start import Start
-from stop import Stop
-from edit import Edit
+from .register import Register
+from .list import List
+from .show import Show
+from .update import Update
+from .build import Build
+from .start import Start
+from .stop import Stop
+from .edit import Edit
