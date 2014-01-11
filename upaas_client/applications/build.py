@@ -56,8 +56,8 @@ class Build(UPaaSApplication):
 
             try:
                 self.api.application(app['id']).build.put(
-                    {'name': app['name'], 'force_fresh': self.force_fresh,
-                     'interpreter_version': self.interpreter_version})
+                    {'name': app['name']}, force_fresh=int(self.force_fresh),
+                    interpreter_version=self.interpreter_version)
             except SlumberHttpBaseException as e:
                 self.handle_error(e)
             else:
