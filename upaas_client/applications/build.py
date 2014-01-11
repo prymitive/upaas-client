@@ -23,10 +23,17 @@ class Build(UPaaSApplication):
     DESCRIPTION = "Build new application package"
 
     force_fresh = False
+    interpreter_version = ''
 
     @cli.switch(["f", "force-fresh"], help="Force building fresh package")
     def set_force_fresh(self):
         self.force_fresh = True
+
+    @cli.switch(["v", "--interpreter-version"], str,
+                help="Force interpreter version (only used for fresh "
+                     "packages)")
+    def set_interpreter_version(self, value):
+        self.interpreter_version = value
 
     def main(self, name):
         self.setup_logger()
@@ -48,12 +55,9 @@ class Build(UPaaSApplication):
             app = resp['objects'][0]
 
             try:
-                if self.force_fresh:
-                    self.api.application(app['id']).build_fresh.put(
-                        {'name': app['name']})
-                else:
-                    self.api.application(app['id']).build.put(
-                        {'name': app['name']})
+                self.api.application(app['id']).build.put(
+                    {'name': app['name'], 'force_fresh': self.force_fresh,
+                     'interpreter_version': self.interpreter_version})
             except SlumberHttpBaseException as e:
                 self.handle_error(e)
             else:
