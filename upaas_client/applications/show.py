@@ -40,7 +40,7 @@ class Show(UPaaSApplication):
             app = resp['objects'][0]
             self.print_msg("Name: %s" % app['name'])
             self.print_msg("Created: %s" % app['date_created'])
-            self.print_msg("Packages: %d" % app['packages'])
+            self.print_msg("Packages: %d" % len(app['packages']))
             self.print_msg("Metadata:")
             for line in app['metadata'].splitlines():
                 self.print_msg("| %s" % line)
