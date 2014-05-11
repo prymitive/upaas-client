@@ -56,6 +56,8 @@ class Edit(UPaaSApplication):
             resp = self.api.application.get(name=name)
         except SlumberHttpBaseException as e:
             self.handle_error(e)
+            if e.response.status_code == 401:
+                return ExitCodes.auth_error
         else:
             if not resp.get('objects'):
                 self.log.error("No such application registered: %s" % name)
