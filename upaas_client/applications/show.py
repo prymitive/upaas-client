@@ -40,7 +40,25 @@ class Show(UPaaSApplication):
             app = resp['objects'][0]
             self.print_msg("Name: %s" % app['name'])
             self.print_msg("Created: %s" % app['date_created'])
-            self.print_msg("Packages: %d" % len(app['packages']))
-            self.print_msg("Metadata:")
-            for line in app['metadata'].splitlines():
-                self.print_msg("| %s" % line)
+            self.print_msg("Running instances: %s" % app['instance_count'])
+            self.print_msg("Running tasks: %s" % len(app['running_tasks']))
+            pkg = app.get('current_package')
+            if pkg:
+                self.print_msg("Current package:")
+                self.print_msg("Created: %s" % pkg['date_created'],
+                               prefix='*')
+                self.print_msg(
+                    "Interpreter name: %s" % pkg['interpreter_name'],
+                    prefix='*')
+                self.print_msg(
+                    "Interpreter version: %s" % pkg['interpreter_version'],
+                    prefix='*')
+                self.print_msg("Revision ID: %s" % pkg['revision_id'],
+                               prefix='*')
+                self.print_msg("Revision date: %s" % pkg['revision_date'],
+                               prefix='*')
+                self.print_msg("Revision author: %s" % pkg['revision_author'],
+                               prefix='*')
+                self.print_msg("Revision description:", prefix='*')
+                for line in pkg['revision_description'].splitlines():
+                    self.print_msg(line, prefix='')
