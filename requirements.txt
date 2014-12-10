@@ -1,5 +1,5 @@
 -e git+https://github.com/prymitive/upaas-common.git#egg=upaas-common
-slumber==0.6.0
+slumber==0.6.2
 plumbum==1.4.2
 pyOpenSSL==0.14
 ndg-httpsclient==0.3.2
