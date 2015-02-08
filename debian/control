@@ -13,7 +13,7 @@ Depends: ${misc:Depends}, ${python:Depends},
  python-slumber (>= 0.6.2),
  python-plumbum (>= 1.4.2),
  python-openssl (>= 0.13),
- python-ndghttpsclient (>= 0.3.2),
+ python-ndghttpsclient (>= 0.3.3),
  python-pyasn1 (>= 0.1.7)
 XB-Python-Version: ${python:Versions}
 Provides: ${python:Provides}
